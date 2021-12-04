@@ -41,7 +41,7 @@ _a > _b ? _a : _b; })
 
 #define CONCAT(a, b) a ## b
 
-#define PROGMEM   //卵用，在Arduino中间需要将数据保存在flash中间，但是stm32应该直接储存在flash
+#define PROGMEM   //鍗电敤锛屽湪Arduino涓棿闇�瑕佸皢鏁版嵁淇濆瓨鍦╢lash涓棿锛屼絾鏄痵tm32搴旇鐩存帴鍌ㄥ瓨鍦╢lash
 #define EEMEM
 #define FRAME_WIDTH			128
 #define FRAME_HEIGHT		64
@@ -71,7 +71,6 @@ BITS1(bits, -1)
 #define SET_BITS(var, bits...)   var |=   BITS0(bits, -1)
 #define CLEAR_BITS(var, bits...) var &= ~(BITS0(bits, -1))
 #define LOAD_BITS(var, bits...)  var =    BITS0(bits, -1)
-
 
 
 #endif /* UTIL_H_ */

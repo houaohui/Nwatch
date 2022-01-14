@@ -1,5 +1,3 @@
-![P11117-231538](E:\Documents\Tencent Files\3179286437\FileRecv\MobileFile\P11117-231538.jpg)
-
 # N-watch--可联网版
 
 视频介绍：https://www.bilibili.com/video/BV1di4y1o7op?share_source=copy_web

@@ -11,7 +11,7 @@ typedef struct
 } STRBUFF;
 
 
-void console_loop_show(void);
+char console_loop_show(void);
 void console_log(unsigned short time_delay ,char* fmt,...);
 bool up_line(void); 
 bool down_line(void);

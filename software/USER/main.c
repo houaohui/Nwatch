@@ -493,8 +493,6 @@ void c_setup()
 	console_log(200,"TEST:");
 	console_log(200,"1\r\n23\r\n456\n789a\nbcdef\nghijkl\nmnopqrs\ntuvwxyz~\n!@#$^&*()\n`-=_+[]\\|/");
 	console_log(200,"\n");
-	console_log(200,"\r\n");
-	console_log(200,"end\n");
 	console_log(120,"--- welcome !---");
 	console_log(10,"  _   _    _    ");
 	console_log(10," | | | |  |_|   ");
@@ -525,9 +523,6 @@ void c_setup()
 	printf("init2:%d",i);
 	console_log(1,"init2:%d",i);
 	
-	console_log(500,"ok:1");
-	console_log(500,"ok:2");
-	console_log(500,"ok:3");
 	console_log(500,"start !");
 	milliseconds=0;
 	

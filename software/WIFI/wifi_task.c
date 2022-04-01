@@ -1,6 +1,7 @@
 #include  "wifi_task.h"
 #include "common.h"
 #include "delay.h"
+#include "gui_log_console.h"
 
 
 
@@ -33,47 +34,58 @@ extern char skip_aim_flag;
 
 static bool btndown()
 {
-	if(cmd_finish==3)
-	{
-		console_log(1,"time&date:");
-		Usart2_RxCounter=0;
-		memset(WiFi_RX_BUF,0,WiFi_RXBUFF_SIZE);
-		WiFi_send("GET http://api.k780.com:88/?app=life.time&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json&HTTP/1.1\r\n");
-		buttons_setFunc(BTN_1,down_line);
-		buttons_setFunc(BTN_3,up_line); 
-		
-	}
-	else if(cmd_finish==4)
-	{
-		console_log(1,"weather:");
-		Usart2_RxCounter=0;
-		memset(WiFi_RX_BUF,0,WiFi_RXBUFF_SIZE);
-		WiFi_send("GET https://api.seniverse.com/v3/weather/now.json?key=SIN2EqCTJrkaqqOpk&location=jiaozuo&language=en&unit=c\r\n");
-		buttons_setFunc(BTN_1,down_line);
-		buttons_setFunc(BTN_3,up_line); 
-	}
-	else
-	{
-		console_log(1,"->");
-	}
+	
+	buttons_setFunc(BTN_1,down_line);
+	buttons_setFunc(BTN_3,up_line); 
+	
+
+	console_log(1,"->");
+
 	
 	skip_aim_flag=1;
 	return true;
 }
+extern char LOOP_SHOW_MD;
+extern short pix_show_idx;
+char log_first=0;
 
 void wifi_test_open(void)
 {
 	display_setDrawFunc(draw);
 	buttons_setFuncs(btndown, btnExit, btnup );
 	beginAnimation2(NULL);
-	if(keep_on==0)  //第一次进入时打印此句话
-		console_log(1,"WiFi TEST:");
-	keep_on = true;
+
+	//loop show模式
+	LOOP_SHOW_MD=true;
 	Usart2_RxCompleted=0;
+	
+	//清除显示偏移
+	pix_show_idx=64;
+	
+	//第一次进入时打印此句话
+	if(keep_on==0)
+		log_first=true;
+	
+	keep_on = true;
 }
 
-
-
+//跳过动画打印
+short time=50;
+char skipped_AMI()
+{
+	if(log_first==true)
+	{
+		if(--time==0)
+			log_first=false;
+		return false;
+	}
+	else if(log_first==false&&!time)
+	{
+		time=50;
+		return true;
+	}
+	return false;
+}
 
 
 static display_t draw()
@@ -102,6 +114,12 @@ static display_t draw()
 		}
 		
 	}
+	
+	if(skipped_AMI())
+	{
+		console_log(1,"WiFi TEST:");
+	}
+	
 	console_loop_show();
 	
 

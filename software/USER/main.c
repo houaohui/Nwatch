@@ -120,7 +120,7 @@ const uint32_t STAY[]={
 	
 	TONE_REPEAT
 
-};  //ĞıÂÉ
+};  //æ—‹å¾‹
 
 
 const uint32_t TUNE[]={
@@ -465,18 +465,18 @@ const uint32_t TUNE[]={
 	
 	TONE_REPEAT
 
-};  //ĞıÂÉ
+};  //æ—‹å¾‹
 
 void c_setup()
 {
 	
 	//SystemInit();	
- 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//ÉèÖÃÏµÍ³ÖĞ¶ÏÓÅÏÈ¼¶·Ö×é2
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// ÉèÖÃÖĞ¶ÏÓÅÏÈ¼¶·Ö×é2	  
-	//delay_init(168);          //³õÊ¼»¯ÑÓÊ±º¯Êı
-	delay_init();	    	 //ÑÓÊ±º¯Êı³õÊ¼?
+ 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//è®¾ç½®ç³»ç»Ÿä¸­æ–­ä¼˜å…ˆçº§åˆ†ç»„2
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// è®¾ç½®ä¸­æ–­ä¼˜å…ˆçº§åˆ†ç»„2	  
+	//delay_init(168);          //åˆå§‹åŒ–å»¶æ—¶å‡½æ•°
+	delay_init();	    	 //å»¶æ—¶å‡½æ•°åˆå§‹?
 #if COMPILE_UART
-	uart_init(UART_BAUD);		//³õÊ¼»¯´®¿Ú²¨ÌØÂÊÎª115200
+	uart_init(UART_BAUD);		//åˆå§‹åŒ–ä¸²å£æ³¢ç‰¹ç‡ä¸º115200
 	//printf("begun");
 #endif
 	
@@ -484,7 +484,7 @@ void c_setup()
 	
 	buttons_init();
  	//Yaogan_Init();
-	LCD_Init();               //³õÊ¼»¯OLED½Ó¿Ú
+	LCD_Init();               //åˆå§‹åŒ–OLEDæ¥å£
 	
 	Usart2_Init(115200);
 	WiFi_ResetIO_Init();
@@ -503,13 +503,14 @@ void c_setup()
 	console_log(10,"--press button--");
 	while(KEY0);
 	console_log(1,"reset wifi");
-	RESET_IO(0);                                    //¸´Î»IOÀ­µÍµçÆ½
-	delay_ms(500);                                  //ÑÓÊ±500ms
+	RESET_IO(0);                                    //å¤ä½IOæ‹‰ä½ç”µå¹³
+	delay_ms(500);                                  //å»¶æ—¶500ms
 	RESET_IO(1);   
 	delay_ms(1000);
 	WiFi_send("AT\r\n"); 
 	console_log(1,"send AT ");
 	delay_ms(500);
+	WiFi_send("AT+CWJAP=\"%s\",\"%s\"\r\n",SSID,PASS); 
 	console_log(1,"%s",Usart2_RxBuff);
 	console_log(1,"%s",&Data_buff[2]);
 
@@ -529,11 +530,11 @@ void c_setup()
 	memset(&oledBuffer, 0x00, FRAME_BUFFER_SIZE);
 	
 	appconfig_init();
-	led_init();               //³õÊ¼»¯LED
+	led_init();               //åˆå§‹åŒ–LED
 	buzzer_init();	
 	//global_init();
 	
-	alarm_init();             //ÎŞ·¨´¢´æÄÖÖÓ£¬Ã¿´ÎÖØÆôÒÔºóĞèÒª×Ô¶¨Òå
+	alarm_init();             //æ— æ³•å‚¨å­˜é—¹é’Ÿï¼Œæ¯æ¬¡é‡å¯ä»¥åéœ€è¦è‡ªå®šä¹‰
 
 	
 	
@@ -543,7 +544,7 @@ void c_setup()
 	// Set watchface
 	display_set(watchface_normal);
 
-	display_load();//Æô¶¯±íÅÌ
+	display_load();//å¯åŠ¨è¡¨ç›˜
 
   
 }
@@ -581,7 +582,7 @@ void c_loop()
 	pwrmgr_update();
 
 
-//ÏÔÊ¾Íê³ÉºóÇå³ı»º³åÇø
+//æ˜¾ç¤ºå®Œæˆåæ¸…é™¤ç¼“å†²åŒº
 	memset(&oledBuffer, 0x00, FRAME_BUFFER_SIZE);
 
 }
@@ -592,13 +593,13 @@ int main(void)
 	
 	//printf("begin>>>\r\n");
 	
-	c_setup();	    //³õÊ¼»¯
+	c_setup();	    //åˆå§‹åŒ–
 
 	
 	while(1)
 	{
 
-		c_loop(); //Ñ­»·
+		c_loop(); //å¾ªç¯
 	}
 	
 }

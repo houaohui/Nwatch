@@ -4,10 +4,10 @@
 #include "common.h"
 #include "lcd.h"
 
-//æ”¯æŒæ¢è¡Œ
+//Ö§³Ö»»ĞĞ
 #define SUPORT_HUANGHANG    1
 
-//æ›´æ–°è¡ŒåŠ¨ç”»
+//¸üĞÂĞĞ¶¯»­
 #define SUPORT_NEW_LINE_AMI 1
 
 #define LINE_BUF_MAX  50
@@ -37,14 +37,15 @@ void gui_print_s(int x, int y,char *str)
 
 
 
-//æ˜¾ç¤ºåƒç´ çº§åç§»64-160
+//ÏÔÊ¾ÏñËØ¼¶Æ«ÒÆ64-160
 short pix_show_idx=CHAR_HEIGHT*LINE_SHOW_CNT;
 
 
 
-//åƒç´ çº§çš„æŒ‰é”®å›è°ƒå‡½æ•°
+//ÏñËØ¼¶µÄ°´¼ü»Øµ÷º¯Êı
 bool up_line(void)
 {
+	pix_show_idx++;
 	pix_show_idx++;
 	if(pix_show_idx>=CHAR_HEIGHT*LINE_BUF_MAX) 
 	{
@@ -52,9 +53,10 @@ bool up_line(void)
 	}
 	return false;
 }
-//åƒç´ çº§çš„æŒ‰é”®å›è°ƒå‡½æ•°
+//ÏñËØ¼¶µÄ°´¼ü»Øµ÷º¯Êı
 bool down_line(void)
 {
+	pix_show_idx--;
 	pix_show_idx--;
 	if(pix_show_idx<=CHAR_HEIGHT*LINE_SHOW_CNT)
 	{
@@ -63,13 +65,26 @@ bool down_line(void)
 	return false;
 }
 
+char is_loging(void)
+{
+	return (NEW_LINE_AMI==true&&pix_show_idx!=CHAR_HEIGHT*LINE_SHOW_CNT);
+}
 
-//æ­¤å‡½æ•°æ›¿æ¢äº†ä»¥å‰çš„æ»šåŠ¨ï¼Œç°åœ¨æ˜¯åƒç´ çº§æ»šåŠ¨ï¼Œå¦‚æœæƒ³è¦ä»¥å‰çš„æ–¹å¼ï¼Œæ³¨é‡Šè¿™ä¸ªï¼Œç”¨ä¸‹é¢çš„ä»¥å‰çš„
+//´ÓµÚlineĞĞ¿ªÊ¼£¬¸ù¾İÊ£ÓàµÄĞĞÊı³É±ÈÀıÔö¼Ó¶¯»­ËÙ¶È£¬ËÙ¶È×î´óÎª (×Ö·û¸ß¶ÈCHAR_HEIGHT/2-line+1) = 4 Pixels
+short Generate_Dynamic_Aim_Speed(short line)
+{
+	if (line > CHAR_HEIGHT/2)
+		return 0;
+	return pix_show_idx-(CHAR_HEIGHT*LINE_SHOW_CNT)<=line*CHAR_HEIGHT ? 1:1+Generate_Dynamic_Aim_Speed(line+1);
+}
+
+
+//´Ëº¯ÊıÌæ»»ÁËÒÔÇ°µÄ¹ö¶¯£¬ÏÖÔÚÊÇÏñËØ¼¶¹ö¶¯£¬Èç¹ûÏëÒªÒÔÇ°µÄ·½Ê½£¬×¢ÊÍÕâ¸ö£¬ÓÃÏÂÃæµÄÒÔÇ°µÄ
 char console_loop_show(void)
 {
 	static char deal_ok=true;
 	
-	char show_index=(LINE_BUF_MAX+index-LINE_SHOW_CNT)%LINE_BUF_MAX;  //ç¬¬ä¸€è¡Œç´¢å¼•å€¼
+	char show_index=(LINE_BUF_MAX+index-LINE_SHOW_CNT)%LINE_BUF_MAX;  //µÚÒ»ĞĞË÷ÒıÖµ
 	
 #if SUPORT_NEW_LINE_AMI
 	
@@ -77,7 +92,7 @@ char console_loop_show(void)
 	if(NEW_LINE_AMI==true&&pix_show_idx!=CHAR_HEIGHT*LINE_SHOW_CNT)
 	{
 		deal_ok=false;
-		pix_show_idx-=pix_show_idx-(CHAR_HEIGHT*LINE_SHOW_CNT)<=CHAR_HEIGHT ? 1:2;
+		pix_show_idx-=Generate_Dynamic_Aim_Speed(1);
 		if(pix_show_idx<=CHAR_HEIGHT*LINE_SHOW_CNT)
 		{
 			deal_ok=true;
@@ -90,7 +105,7 @@ char console_loop_show(void)
 	
 #endif
 	
-	//å¾—åˆ°ç›¸å¯¹äºshow_indexå‘ä¸Šçš„åç§»è¡Œæ•°
+	//µÃµ½Ïà¶ÔÓÚshow_indexÏòÉÏµÄÆ«ÒÆĞĞÊı
 	short pix_offset_line=(pix_show_idx-CHAR_HEIGHT*LINE_SHOW_CNT)/CHAR_HEIGHT+1;   
 	
 	show_index=(LINE_BUF_MAX+show_index-pix_offset_line)%LINE_BUF_MAX;
@@ -99,7 +114,7 @@ char console_loop_show(void)
 	
 	for(char c=0;c<=LINE_SHOW_CNT;c++)  
 	{
-		gui_print_s(0,LINE(c)+(pix_show_idx-CHAR_HEIGHT*LINE_SHOW_CNT)%CHAR_HEIGHT,string_buff[show_index].str_buff);  //ä¾æ¬¡ä»ç¬¬ä¸€è¡Œæ˜¾ç¤ºåˆ°ç¬¬å…«è¡Œ
+		gui_print_s(0,LINE(c)+(pix_show_idx-CHAR_HEIGHT*LINE_SHOW_CNT)%CHAR_HEIGHT,string_buff[show_index].str_buff);  //ÒÀ´Î´ÓµÚÒ»ĞĞÏÔÊ¾µ½µÚ°ËĞĞ
 		show_index++;
 		if(show_index>=LINE_BUF_MAX)show_index=0;
 	}
@@ -107,7 +122,7 @@ char console_loop_show(void)
 }
 
 
-//copycnt-1ä¸ªå­—ç¬¦
+//copycnt-1¸ö×Ö·û
 void strcopy_cnt(char* buf, char* src ,char cnt)
 {
 	char i=0;
@@ -119,7 +134,7 @@ void strcopy_cnt(char* buf, char* src ,char cnt)
 }
 
 
-//è§£å†³\nå‰é¢çš„\r
+//½â¾ö\nÇ°ÃæµÄ\r
 char r_off_set=0;
 char r_kee=0;
 
@@ -142,10 +157,10 @@ short find_huanhang_str_idx(char* src,unsigned short cnt)
 				r_off_set=1;
 			}
 
-			return i;//æŒ‡å‘å½“å‰å­—ç¬¦
+			return i;//Ö¸Ïòµ±Ç°×Ö·û
 		}
-		//è§£å†³\råˆšå¥½åœ¨æœ€åä¸€ä¸ªå­—ç¬¦ï¼Œæ­¤æ—¶æœç´¢ä¸åˆ°\n
-		//åªå¤„ç†è¿ç»­çš„ï¼Œè‹¥æœ‰å•ç‹¬çš„\rå°±ç›´æ¥æ˜¾ç¤ºå‡ºæ¥
+		//½â¾ö\r¸ÕºÃÔÚ×îºóÒ»¸ö×Ö·û£¬´ËÊ±ËÑË÷²»µ½\n
+		//Ö»´¦ÀíÁ¬ĞøµÄ£¬ÈôÓĞµ¥¶ÀµÄ\r¾ÍÖ±½ÓÏÔÊ¾³öÀ´
 		if(src[cnt-1]=='\r'&&src[cnt]=='\n')
 		{
 			r_kee=1;
@@ -160,7 +175,7 @@ short find_huanhang_str_idx(char* src,unsigned short cnt)
 void console_log(unsigned short time_delay ,char* fmt,...)
 {
 	
-	char div_flag=0;  //åˆ†è¡Œæ˜¾ç¤ºæ ‡å¿—ä½
+	char div_flag=0;  //·ÖĞĞÏÔÊ¾±êÖ¾Î»
 	va_list ap;
 	va_start(ap,fmt);
 	vsprintf(firststr_buff,fmt,ap);
@@ -168,30 +183,30 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 	
 	
 	
-	unsigned short All_str_length=strlen((const char*)firststr_buff);	//è®¡ç®—æ˜¾ç¤ºæ€»å­—ç¬¦é•¿åº¦
+	unsigned short All_str_length=strlen((const char*)firststr_buff);	//¼ÆËãÏÔÊ¾×Ü×Ö·û³¤¶È
 	
 	if(All_str_length==0)
 	{
 		return;
 	}
 	
-#if SUPORT_HUANGHANG  //æ”¯æŒæ¢è¡Œ
+#if SUPORT_HUANGHANG  //Ö§³Ö»»ĞĞ
 	
-	//æ¢è¡Œå­—ç¬¦deä½ç½®,æœç´¢LINE_CHAR_CNTä¸ªå­—ç¬¦
+	//»»ĞĞ×Ö·ûdeÎ»ÖÃ,ËÑË÷LINE_CHAR_CNT¸ö×Ö·û
 	short this_line_char_cnt=find_huanhang_str_idx(firststr_buff,LINE_CHAR_CNT);
 	
-	//LINE_CHAR_CNTä¸ªå­—ç¬¦ä¸­æœ‰\n
+	//LINE_CHAR_CNT¸ö×Ö·ûÖĞÓĞ\n
 	if(this_line_char_cnt!=-1) 
 	{
 
 		{
 			div_flag=1;
 			strcopy_cnt(string_buff[index].str_buff,firststr_buff,this_line_char_cnt-r_off_set); 
-			this_line_char_cnt++; //æ¢è¡Œåœ¨ä¸‹è¡Œä¸æ˜¾ç¤º
+			this_line_char_cnt++; //»»ĞĞÔÚÏÂĞĞ²»ÏÔÊ¾
 		}
 
 	}
-	//LINE_CHAR_CNTä¸ªå­—ç¬¦ä¸­æ²¡æœ‰\n
+	//LINE_CHAR_CNT¸ö×Ö·ûÖĞÃ»ÓĞ\n
 	else
 	{
 		div_flag=All_str_length/LINE_CHAR_CNT;
@@ -199,7 +214,7 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 		if(r_kee)
 		{
 			r_kee=0;
-			//è·³è¿‡\råé¢çš„\n
+			//Ìø¹ı\rºóÃæµÄ\n
 			this_line_char_cnt = LINE_CHAR_CNT;
 			strcopy_cnt(string_buff[index].str_buff,firststr_buff,this_line_char_cnt-r_off_set); 
 			this_line_char_cnt = LINE_CHAR_CNT+1;
@@ -217,9 +232,9 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 	
 #else
 
-	div_flag=All_str_length/LINE_CHAR_CNT;  //æ˜¾ç¤ºæ–°è¡Œæ ‡å¿—
+	div_flag=All_str_length/LINE_CHAR_CNT;  //ÏÔÊ¾ĞÂĞĞ±êÖ¾
 	
-	//å‚¨å­˜å½“å‰å­—ç¬¦ä¸²
+	//´¢´æµ±Ç°×Ö·û´®
 	strcopy_cnt(string_buff[index].str_buff,firststr_buff,LINE_CHAR_CNT);
 #endif
 	
@@ -229,38 +244,38 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 	{
 		for(char i=0;i<last_str_length-now_str_length;i++)
 		{
-			strcat(string_buff[index].str_buff," ");  //åŠ å…¥ç©ºæ ¼æ¸…ç©ºä¸Šä¸€è¡Œçš„æ˜¾å­˜
+			strcat(string_buff[index].str_buff," ");  //¼ÓÈë¿Õ¸ñÇå¿ÕÉÏÒ»ĞĞµÄÏÔ´æ
 		}
 	}
 	last_str_length=now_str_length;
 	
 	
-	if(index>=LINE_SHOW_CNT)  //å¤§äºè¦æ˜¾ç¤ºçš„è¡Œæ•°ï¼Œå°±è¦æ˜¾ç¤ºæ–°è¡Œ
+	if(index>=LINE_SHOW_CNT)  //´óÓÚÒªÏÔÊ¾µÄĞĞÊı£¬¾ÍÒªÏÔÊ¾ĞÂĞĞ
 	{
 		new_line_flag=true;
 	}
 
 	index++;
 	
-	if(index>=LINE_BUF_MAX)  //å¾ªç¯å‚¨å­˜å­—ç¬¦
+	if(index>=LINE_BUF_MAX)  //Ñ­»·´¢´æ×Ö·û
 	{
 		index=0;
 	}
 	
 	//show
-	if(new_line_flag==false) //ç›´æ¥åœ¨ä¸‹ä¸€è¡Œæ‰“å°æ–°è¡Œ
+	if(new_line_flag==false) //Ö±½ÓÔÚÏÂÒ»ĞĞ´òÓ¡ĞÂĞĞ
 	{
 		gui_print_s(0,LINE(index),string_buff[index-1].str_buff);
 		oled_flush();
 		
-		//éloop showæ¨¡å¼ä½¿ç”¨é˜»å¡å»¶æ—¶
+		//·Çloop showÄ£Ê½Ê¹ÓÃ×èÈûÑÓÊ±
 		delay_ms(time_delay);
 	}
 	else
 	{
-		//åº•éƒ¨æ›´æ–°æ–°è¡Œæ ‡å¿—ä½
+		//µ×²¿¸üĞÂĞÂĞĞ±êÖ¾Î»
 		NEW_LINE_AMI=true;
-		//æ¯æ¬¡éœ€è¦å¾€ä¸‹åç§»å½¢æˆåŠ¨ç”»
+		//Ã¿´ÎĞèÒªÍùÏÂÆ«ÒÆĞÎ³É¶¯»­
 		
 #if SUPORT_NEW_LINE_AMI
 		
@@ -280,7 +295,7 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 				sta = !console_loop_show();
 				oled_flush();
 			}while(sta);
-			//éloop showæ¨¡å¼ä½¿ç”¨é˜»å¡å»¶æ—¶
+			//·Çloop showÄ£Ê½Ê¹ÓÃ×èÈûÑÓÊ±
 			delay_ms(time_delay);
 		}
 		
@@ -290,7 +305,7 @@ void console_log(unsigned short time_delay ,char* fmt,...)
 	
 	
 	
-#if SUPORT_HUANGHANG  //æ”¯æŒæ¢è¡Œ
+#if SUPORT_HUANGHANG  //Ö§³Ö»»ĞĞ
 	
 	if(div_flag)
 	{

@@ -10,7 +10,7 @@ typedef struct
 	char str_buff[20];
 } STRBUFF;
 
-
+char is_loging(void);
 char console_loop_show(void);
 void console_log(unsigned short time_delay ,char* fmt,...);
 bool up_line(void); 

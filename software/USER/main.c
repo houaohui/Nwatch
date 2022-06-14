@@ -519,7 +519,7 @@ void c_setup()
 	do{
 		i=MPU_Init();
 		//printf("init1:%d",i);
-		console_log(1,"init1 :%d",i);
+		console_log(500,"init1 :%d",i);
 	}while(i&KEY0);
 
 	do{

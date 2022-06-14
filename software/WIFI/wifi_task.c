@@ -47,6 +47,7 @@ static bool btndown()
 }
 extern char LOOP_SHOW_MD;
 extern short pix_show_idx;
+extern char NEW_LINE_AMI;
 char log_first=0;
 
 void wifi_test_open(void)
@@ -60,7 +61,8 @@ void wifi_test_open(void)
 	Usart2_RxCompleted=0;
 	
 	//清除显示偏移
-	pix_show_idx=64;
+	//pix_show_idx=64;
+	NEW_LINE_AMI=true;
 	
 	//第一次进入时打印此句话
 	if(keep_on==0)
@@ -71,9 +73,9 @@ void wifi_test_open(void)
 
 //跳过动画打印
 short time=50;
-char skipped_AMI()
+char skipped_AMI(bool with_conditions)
 {
-	if(log_first==true)
+	if(log_first==true&&with_conditions)
 	{
 		if(--time==0)
 			log_first=false;
@@ -115,7 +117,7 @@ static display_t draw()
 		
 	}
 	
-	if(skipped_AMI())
+	if(skipped_AMI(!is_loging()))
 	{
 		console_log(1,"WiFi TEST:");
 	}

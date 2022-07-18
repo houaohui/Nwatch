@@ -241,7 +241,6 @@ void buzzer_update()
 	if(buzzLen && (millis() - startTime) >= buzzLen)
 	{
 		stop();
-		led_flash(LED_GREEN, 50, 255);
 
 		if(onFinish != NULL)
 			onFinish();  //播放下一个音节

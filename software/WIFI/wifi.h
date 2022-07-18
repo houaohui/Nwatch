@@ -55,6 +55,11 @@ void show_wather_data(void);
 void show_time_data(void);
 void updata_time_data(void);
 
+void scan_wifi(void);
+void smartconfig(void);
+
+
+void wifi_status(void);
 #endif
 
 

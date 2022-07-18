@@ -1,5 +1,6 @@
 #include "wifi_cmd_task.h"
 #include "common.h"
+#include "TXT_Viewer.h"
 
 #define STR_WIFICMDMENU  "WiFi CMD"
 #define CMD1_NAME "deep sleep"
@@ -8,7 +9,7 @@
 #define CMD4_NAME "updata weather"
 #define CMD5_NAME "reset wifi"
 
-#define OPTION_COUNT 5
+#define OPTION_COUNT 9
 
 typedef void (*_cmd)(void);
 
@@ -22,7 +23,7 @@ static void mSelect(void);
 static void itemLoader(byte num);
 
 extern char CMD_S[10];
-
+//µÈ´ý¶¯»­Ö´ÐÐÃüÁî
 char skip_aim_flag=0;
 
 static void cmd_start(_cmd wifi_cmd)
@@ -125,6 +126,28 @@ void cmd5(void)
 	cmd_start(reset_wifi_cmd); 
 }
 
+void cmd6(void)
+{
+	cmd_start(scan_wifi); 
+}
+
+
+void cmd7(void)
+{
+	cmd_start(smartconfig); 
+}
+
+void cmd8(void)
+{
+	cmd_start(wifi_status); 
+}
+
+void txt(void)
+{
+	
+	cmd_start(txt_test_open); 
+}
+
 static void itemLoader(byte num)
 {
 	num = 0;
@@ -138,6 +161,14 @@ static void itemLoader(byte num)
 	setMenuOption_P(num++, PSTR(CMD4_NAME), NULL, cmd4);
 	
 	setMenuOption_P(num++, PSTR(CMD5_NAME), NULL, cmd5);
+	
+	setMenuOption_P(num++, PSTR("scan wifi"), NULL, cmd6);
+	
+	setMenuOption_P(num++, PSTR("wifi status"), NULL, cmd8);
+	
+	setMenuOption_P(num++, PSTR("smartconfig"), NULL, cmd7);
+	
+	setMenuOption_P(num++, PSTR("TXT viewer test"), NULL, txt);
 
 	addBackOption();
 }

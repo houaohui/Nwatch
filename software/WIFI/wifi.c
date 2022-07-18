@@ -66,11 +66,11 @@ void light_sleep(void)
 #define CMD_MAXNUM  10
 char CMD_S[10]={2,0,0,0,0,0,0,0,0,0};
 //如果指令执行过后就跳过
-char cmd_state(unsigned char time,unsigned char n,char* str)
+char cmd_state(unsigned short time,unsigned char n,char* str)
 {
 	unsigned char _next=n+1;
 	unsigned char _last=n-1;
-	static unsigned char time_cnt=0;
+	static unsigned short time_cnt=0;
 	
 
 	
@@ -106,6 +106,8 @@ char cmd_state(unsigned char time,unsigned char n,char* str)
 		}
 		//计时超时处理
 		time_cnt++;
+//		if()
+//		console_log(1,".");
 		if(time_cnt>time)
 		{
 			time_cnt=0;
@@ -289,7 +291,6 @@ void get_weather_cmd(void)
 	
 }
 
-
 void reset_wifi_cmd(void)
 {
 	if(cmd_state(10,1,"ready")==0)
@@ -304,5 +305,95 @@ void reset_wifi_cmd(void)
 		CMD_S[1]='o';
 		cmd_finish=5;
 	}
+}
+
+
+
+void wifi_status(void)
+{
+	char i=1;
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		console_log(1,"wifi status:");
+		WiFi_send("AT+CIPSTATUS\r\n"); 
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		console_log(1,"AP info:");
+		WiFi_send("AT+CWJAP?\r\n"); 
+		cmd_finish=1;
+	}
+}
+
+void scan_wifi(void)
+{
+	console_log(1,"scaning:");
+	WiFi_send("AT+CWLAP\r\n"); 
+	cmd_finish=1;
+}
+
+void smartconfig(void)
+{
+	char i=1;
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(500,"AT+CWMODE?");
+		WiFi_send("AT+CWMODE?\r\n");
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(500,"AT+CWMODE_CUR=1");
+		WiFi_send("AT+CWMODE_CUR=1\r\n");
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(500,"AT+CWMODE?");
+		WiFi_send("AT+CWMODE?\r\n");
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(500,"AT+CWAUTOCONN=1");
+		WiFi_send("AT+CWAUTOCONN=1\r\n");
+	}
+	
+	if(cmd_state(300,i++,"connected")==0)
+	{
+		console_log(50,"to config...");
+		//console_log(50,"AT+CWSTARTSMART=3");
+		WiFi_send("AT+CWSTARTSMART=3\r\n");
+	}
+	else if(CMD_S[i-1]==2||CMD_S[i-1]==3)
+	{
+		CMD_S[i]='o';
+		if(CMD_S[i-1]==2)
+		{
+			console_log(500,"succeed");
+		}
+		else
+		{
+			console_log(500,"failed");
+		}
+		
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(50,"AT+CWSTOPSMART");
+		WiFi_send("AT+CWSTOPSMART\r\n");
+	}
+	
+	if(cmd_state(10,i++,"OK")==0)
+	{
+		//console_log(50,"AT+CIPSTATUS");
+		WiFi_send("AT+CIPSTATUS\r\n");
+		cmd_finish=1;
+	}
+	
 }
 

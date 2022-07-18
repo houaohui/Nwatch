@@ -43,49 +43,35 @@ void led_init()
  	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIOA15
 }
 
-//static void flash(led_s* led, byte len, byte brightness, volatile byte* ccr, volatile byte* ocr, byte com, volatile byte* port, byte pin)
-static void flash(led_s* led, byte len,byte pin)
+
+static void flash(led_s* led, byte len,byte brightness)
 {
   led->flashLen = len;
   led->startTime = millis();
 
-//  if (brightness == 255 || brightness == 0)
-//  {
-//    *ccr &= ~com;
-//    brightness == 255 ? (*port |= pin) : (*port &= ~pin);
-//  }
-//  else
-//  {
-////#ifdef __AVR_ATmega32U4__
-////    power_timer4_enable();
-////#else
-////    power_timer0_enable();
-////#endif
-//    *ccr |= com;
-//    *ocr = brightness;
-//  }
 }
 
+bool CTRL_LEDs=0;
 void led_flash(led_t led, byte len, byte brightness)
 {
-	if (!appConfig.CTRL_LEDs) 
+	
+	//if(!appConfig.CTRL_LEDs)//结构体中的这个bool变量始终是0，在led设置里面能改，但是在这里又变为零了？？
+	if (!CTRL_LEDs) //必须这样操作才可以???
 	{
 
 		switch (led)
 		{
 		  case LED_RED:
-	//        flash(&ledRed, len, brightness, &RED_CCR, &RED_OCR, _BV(RED_COM), &RED_PORT, _BV(RED_PIN));
-				flash(&ledRed, len, 13);
+				flash(&ledRed, len, brightness);LED0=!brightness;
 			break;
 		  case LED_GREEN:
-	//        flash(&ledGreen, len, brightness, &GREEN_CCR, &GREEN_OCR, _BV(GREEN_COM), &GREEN_PORT, _BV(GREEN_PIN));
-				flash(&ledGreen, len, 13);
+				flash(&ledGreen, len, brightness);LED1=!brightness;
 			break;
 		  default:
 			break;
 		}
 
-//    pwrmgr_setState(PWR_ACTIVE_LED, PWR_STATE_IDLE);
+		pwrmgr_setState(PWR_ACTIVE_LED, PWR_STATE_IDLE);
 	}
 }
 
@@ -95,39 +81,31 @@ BOOL led_flashing()
   return ledRed.flashLen || ledGreen.flashLen;
 }
 
-//static BOOL _update(led_s* led, volatile byte* ccr, byte com, volatile byte* port, byte pin)
 static BOOL _update(led_s* led,  byte pin)        //(volatile unsigned long  *)
 {
-  if (led->flashLen && (millis8_t)(millis() - led->startTime) >= led->flashLen)
-  {
-	LED1=0;
-    led->flashLen = 0;
-  }
-	else
-	LED1=1;
+	if (led->flashLen && (millis8_t)(millis() - led->startTime) >= led->flashLen)
+	{
+		led->flashLen = 0;
+	}
+	
 
-
-  return led->flashLen;
+	return led->flashLen;
 }
 
 void led_update()
 {
-//  BOOL red = _update(&ledRed, &RED_CCR, _BV(RED_COM), &RED_PORT, _BV(RED_PIN));
-//  BOOL green = _update(&ledGreen, &GREEN_CCR, _BV(GREEN_COM), &GREEN_PORT, _BV(GREEN_PIN));
-BOOL red = _update(&ledRed,13);          //LED0 PFout(9)
-BOOL green = _update(&ledGreen, 13);    //LED1 PFout(10)
 
 	
-//  if (!red && !green)
-//  {
-    // Timer no longer in use, disable
-//#ifdef __AVR_ATmega32U4__
-//    power_timer4_disable();
-//#else
-//    power_timer0_disable();
-//#endif
-//    pwrmgr_setState(PWR_ACTIVE_LED, PWR_STATE_NONE);
-//  }
+	BOOL red = _update(&ledRed,LED_RED);          //LED0 PFout(9)
+	BOOL green = _update(&ledGreen, LED_GREEN);    //LED1 PFout(10)
+
+	
+	if (!red && !green)
+	{
+		LED0=1;//关闭
+		LED1=1;
+		pwrmgr_setState(PWR_ACTIVE_LED, PWR_STATE_NONE);
+	}
 }
 
 // Turn off LEDs

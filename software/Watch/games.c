@@ -32,9 +32,11 @@ static uint8_t getItemCount()
 
 void mGamesOpen()
 {
+	menuData.isOpen = true;
 	setMenuInfo(OPTION_COUNT, MENU_TYPE_STR, PSTR(STR_GAMESMENU));
 	setMenuFuncs(MENUFUNC_NEXT, mSelect, MENUFUNC_PREV, itemLoader);
-
+	buttons_setFuncs(menu_up, menu_select, menu_down);  //需要菜单绑定到按键，不让返回无法操作菜单
+	display_setDrawFunc(menu_draw);
 	setPrevMenuOpen(&prevMenuData, mGamesOpen);
 	
 	beginAnimation2(NULL);

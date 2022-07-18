@@ -129,8 +129,9 @@ typedef struct{
 #endif
 	//byte clockface;
 	bool display180;
-  bool CTRL_LEDs;
+	
 	bool showFPS;
+	bool CTRL_LEDs;
 	timemode_t timeMode;
 	union {
 		ulong volumes;

@@ -69,7 +69,8 @@ void draw_bitmap_s2(image_s *img)
 
 void game3_start()
 {
-	menu_close();
+	//menu_close();
+	beginAnimation2(NULL);
 	
 	srand(millis());
 
@@ -97,7 +98,7 @@ static bool btnExit()
 	if(lives == 255)
 		game3_start();
 	else
-		animation_start(display_load, ANIM_MOVE_OFF);
+		animation_start(back, ANIM_MOVE_OFF);
 	return true;
 }
 

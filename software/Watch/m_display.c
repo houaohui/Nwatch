@@ -61,12 +61,12 @@ static void setBrightness()
  	byte brightness = appConfig.brightness;
 	brightness++;
 	if(brightness > 3)
-		brightness = 1;
+		brightness = 0;
 		
 	appConfig.brightness = brightness;
 
 	WriteCmd(0x81); //--set contrast control register
-	WriteCmd(brightness*85); //亮度调节 0x00~0xff
+	WriteCmd((brightness+1)*63); //亮度调节 0x00~0xff
  
 }
 
@@ -87,19 +87,22 @@ static void setRotate()
 	
 	if(rotate)
 	{
-		WriteCmd(0xA1); 
-		WriteCmd(0XC8); 
-	}
-	else
-	{
 		WriteCmd(0xA0); 
 		WriteCmd(0xC0); 
 	}
+	else
+	{
+		WriteCmd(0xA1); 
+		WriteCmd(0XC8); 
+	}
 
 }
-
-static void setLEDs() {
-  appConfig.CTRL_LEDs = !appConfig.CTRL_LEDs;
+extern bool CTRL_LEDs;
+static void setLEDs() 
+{
+	bool CTRL = !appConfig.CTRL_LEDs;//改变一个结构体中的变量没有用，始终不知道为什么，在外面就变为0了
+	appConfig.CTRL_LEDs = CTRL;
+	CTRL_LEDs = appConfig.CTRL_LEDs;
 }
 
 #if COMPILE_ANIMATIONS
@@ -129,6 +132,19 @@ static display_t thisDraw()
 		sprintf_P(buff, PSTR("%hhuS"), (unsigned char)MY_FPS);
 		draw_string(buff, NOINVERT, 56, 40);
 	}
+	if(menuData.selected == 0)
+	{
+		char buff[4];
+		sprintf_P(buff, PSTR("%x"), ((unsigned char)appConfig.brightness+1)*63);
+		draw_string(buff, NOINVERT, 116, 0);
+	}
+	
+	if(menuData.selected == 5)
+	{
+		char buff[4];
+		sprintf_P(buff, PSTR("%d"), appConfig.CTRL_LEDs);
+		draw_string(buff, NOINVERT, 122, 0);
+	}
 	return DISPLAY_DONE;
 }
 
@@ -136,15 +152,6 @@ static display_t thisDraw()
 
 static void setMenuOptions()
 {
-//	setMenuOption_P(0, PSTR(STR_BRIGHTNESS), menu_brightness[appConfig.brightness], setBrightness);
-//	setMenuOption_P(1, PSTR(STR_INVERT), menu_invert, setInvert);
-//	setMenuOption_P(2, PSTR(STR_ROTATE), menu_rotate, setRotate);
-//#if COMPILE_ANIMATIONS
-//	setMenuOption_P(3, PSTR(STR_ANIMATIONS), menu_anim[appConfig.animations], setAnimations);
-//#endif
-//  setMenuOption_P(4, PSTR(STR_LEDS), menu_LEDs[appConfig.CTRL_LEDs], setLEDs);
-//	
-
 	
 	setMenuOption_P(0, PSTR(STR_BRIGHTNESS), menu_brightness[appConfig.brightness], setBrightness);
 	setMenuOption_P(1, PSTR(STR_INVERT), menu_invert, setInvert);

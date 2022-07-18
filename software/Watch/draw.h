@@ -17,5 +17,5 @@ void draw_string(char*, bool, byte, byte);
 void draw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool invert, byte offsetY);
 void draw_clearArea(byte, byte, byte);//, byte);
 void draw_end(void);
-
+void mydraw_bitmap(byte , byte , const byte* , byte , byte , bool , byte ,byte ,byte );
 #endif /* DRAW_H_ */

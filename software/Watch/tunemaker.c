@@ -297,7 +297,7 @@ static bool select()
 {
 	tune_stop(PRIO_HIGH);
 	animation_start(back, ANIM_MOVE_OFF);  //带关闭动画的退出
-	 
+	LED0=1;
 	return true;
 }
 

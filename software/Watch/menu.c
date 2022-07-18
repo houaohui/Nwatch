@@ -246,9 +246,9 @@ void menu_close()
 void setPrevMenuOpen(prev_menu_s* prevMenu, menu_f newPrevMenu)
 {
 	if(menuData.prevMenu != newPrevMenu) // Make sure new and old menu funcs are not the same, otherwise we get stuck in a menu loop
-		prevMenu->last = menuData.prevMenu; // Save previous menu open func
+		prevMenu->last = menuData.prevMenu; // Save previous menu open func  上级的菜单在这里存储
 	menuData.selected = prevMenu->lastSelected; // 
-	menuData.prevMenu = newPrevMenu; // Set new menu open func
+	menuData.prevMenu = newPrevMenu; // Set new menu open func  
 }
  //储存上一次菜单的选项
 void setPrevMenuExit(prev_menu_s* prevMenu)
@@ -258,7 +258,7 @@ void setPrevMenuExit(prev_menu_s* prevMenu)
 	else
 	{
 		prevMenu->lastSelected = 0; // Reset selected item
-		menuData.prevMenu = prevMenu->last; // 
+		menuData.prevMenu = prevMenu->last; // 指向上级菜单
 	}
 }
 

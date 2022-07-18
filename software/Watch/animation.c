@@ -25,7 +25,7 @@ void animation_update()
 	if(animationStatus.active)
 	{
 		byte offsetY = animationStatus.offsetY;
-		if(animationStatus.goingOffScreen)
+		if(animationStatus.goingOffScreen)//形成关闭动画
 		{
 			if(offsetY < 4)
 				offsetY += 1;
@@ -42,7 +42,7 @@ void animation_update()
 				offsetY = 0;
 			}
 		}
-		else
+		else//形成开启动画
 		{
 			if(offsetY > 255 - 4)
 				offsetY += 1;
@@ -61,13 +61,15 @@ void animation_update()
 		}
 
 		animationStatus.offsetY = offsetY;
-		if(!animationStatus.active && animationStatus.animOnComplete != NULL)
+		if(!animationStatus.active && animationStatus.animOnComplete != NULL)//一般是关闭动画有这个函数，动画结束后执行这个函数，用来注册新界面的功能
 		{
-			animationStatus.animOnComplete();
+			animationStatus.animOnComplete();//注册新界面的功能
 			animationStatus.animOnComplete = NULL;
 		}
 	}
 }
+
+
 
 
 //开始动画函数

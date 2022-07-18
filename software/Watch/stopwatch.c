@@ -92,7 +92,8 @@ static display_t draw()
 	byte num1;
 	byte num2;
 	byte num3;
-	ulong  timer1=timer/2.32;     //模拟一秒的时间
+	//ulong  timer1=timer/2.32;     //模拟一秒的时间
+	ulong  timer1=timer;
 	ulong secs = timer1 / 1000;
 
 	if(timer1 < 3600000)

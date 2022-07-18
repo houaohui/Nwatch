@@ -25,7 +25,7 @@ typedef enum
 	USER_INACTIVE
 } user_t;
 
-
+static pwr_state_t active[PWR_ACTIVE_COUNT];
 static sys_t systemState;
 static user_t userState;
 
@@ -142,7 +142,10 @@ void pwrmgr_update()
 	}
 }
 
-
+void pwrmgr_setState(pwr_active_t thing, pwr_state_t state)
+{
+	active[thing] = state;
+}
 
 bool pwrmgr_userActive()
 {

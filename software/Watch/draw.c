@@ -158,6 +158,101 @@ void draw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inver
 	}
 }
 
+
+void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool invert, byte offsetY,byte FRAME_HEIGHT_H,byte FRAME_WIDTH_W)
+{
+	// Apply animation offset
+	yy += animation_offsetY();
+
+	// 
+	byte y = yy - offsetY;
+
+	// 
+	byte h2 = h / 8;
+	
+	// 
+	byte pixelOffset = (y % 8);
+
+	byte thing3 = (yy+h);
+	
+	// 
+	LOOP(h2, hh)
+	{
+		// 
+		byte hhh = (hh * 8) + y; // Current Y pos (every 8 pixels)
+		byte hhhh = hhh + 8; // Y pos at end of pixel column (8 pixels)
+
+		// 
+		if(offsetY && (hhhh < yy || hhhh > FRAME_HEIGHT_H || hhh > thing3))
+			continue;
+
+		// 
+		byte offsetMask = 0xFF;
+		if(offsetY)
+		{
+			if(hhh < yy)
+				offsetMask = (0xFF<<(yy-hhh));
+			else if(hhhh > thing3)
+				offsetMask = (0xFF>>(hhhh-thing3));
+		}
+
+		uint aa = ((hhh / 8) * FRAME_WIDTH_W);
+		
+		const byte* b = bitmap + (hh*w);
+		
+		// If() outside of loop makes it faster (doesn't have to keep re-evaluating it)
+		// Downside is code duplication
+		if(!pixelOffset && hhh < FRAME_HEIGHT_H)
+		{
+			// 
+			LOOP(w, ww)
+			{
+				// Workout X co-ordinate in frame buffer to place next 8 pixels
+				byte xx = ww + x;
+			
+				// Stop if X co-ordinate is outside the frame
+				if(xx >= FRAME_WIDTH_W)
+					continue;
+
+				// Read pixels
+				byte pixels = readPixels(b + ww, invert) & offsetMask;
+
+				oledBuffer[xx + aa] |= pixels;
+
+				//setBuffByte(buff, xx, hhh, pixels, colour);
+			}
+		}
+		else
+		{
+			uint aaa = ((hhhh / 8) * FRAME_WIDTH_W);
+			
+			// 
+			LOOP(w, ww)
+			{
+				// Workout X co-ordinate in frame buffer to place next 8 pixels
+				byte xx = ww + x;
+		
+				// Stop if X co-ordinate is outside the frame
+				if(xx >= FRAME_WIDTH_W)
+					continue;
+
+				// Read pixels
+				byte pixels = readPixels(b + ww, invert) & offsetMask;
+
+				// 
+				if(hhh < FRAME_HEIGHT_H)
+					oledBuffer[xx + aa] |= pixels << pixelOffset;
+					//setBuffByte(buff, xx, hhh, pixels << pixelOffset, colour);				
+
+				// 
+				if(hhhh < FRAME_HEIGHT_H)
+					oledBuffer[xx + aaa] |= pixels >> (8 - pixelOffset);
+					//setBuffByte(buff, xx, hhhh, pixels >> (8 - pixelOffset), colour);		
+			}
+		}
+	}
+}
+
 // y must be a multiple of 8
 // height is always 8
 void draw_clearArea(byte x, byte y, byte w)

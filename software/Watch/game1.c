@@ -45,19 +45,21 @@ display_t game1_draw(void);
 
 static byte uptMove;    //移动状态
 static s_ball ball;
-static bool* blocks;
+static bool* blocks=NULL;
 static byte lives;      //生命值
 static uint score;      //得分
 static byte platformX;  
+static bool gameEnded;
 
-
+extern bool keep_on;
 //游戏开始
 void game1_start()
 {
-	menu_close();
-
+	//menu_close();//里面有打开动画，要在添加一下
+	//menuData.isOpen = false;
+	keep_on = true;
+	beginAnimation2(NULL);
 	srand(millis());
-
 	display_setDrawFunc(game1_draw);
 	buttons_setFuncs(btnRight, btnExit, btnLeft);
 	
@@ -69,13 +71,75 @@ void game1_start()
 	ball.velY = -0.6;
 //	ball.velX = -1;
 //	ball.velY = -1.1;
-	
-	blocks = calloc(BLOCK_COUNT, 1);  //void* calloc（unsigned int num，unsigned int size）内存的动态存储区中分配num个长度为size的连续空间
+	if(blocks==NULL||gameEnded)  //为空或者游戏结束重新分配内存
+	{
+		if(gameEnded)
+		free(blocks);
+		blocks = calloc(BLOCK_COUNT, 1);  //void* calloc（unsigned int num，unsigned int size）内存的动态存储区中分配num个长度为size的连续空间
+	}
 									//函数返回一个指向分配起始地址的指针,calloc函数会自动将内存初始化为0
 	lives = 3;
 	score = 0;
 	platformX = (FRAME_WIDTH / 2) - (PLATFORM_WIDTH / 2);    //平台X坐标（绘制平台开始坐标） = 屏幕宽度/2减去平台宽度/2
 }
+
+#define OPTION_COUNT 3
+static prev_menu_s prevMenuData;
+static void itemLoader(byte num);
+static void mSelect(void);
+
+static void game1_meun(void)
+{
+	//menuData.isOpen = true;  //打开菜单
+	setPrevMenuOpen(&prevMenuData, game1_meun);//多次进入这个菜单，上级菜单也不会被覆盖，上级菜单应该是游戏选择
+	buttons_setFuncs(menu_up, menu_select, menu_down);
+	display_setDrawFunc(menu_draw);  //绑定绘制函数为menu_draw
+	setMenuInfo(OPTION_COUNT, MENU_TYPE_STR, PSTR("game setting"));   //获取当前菜单信息（选项个数，菜单类型是文字还是图标）
+	setMenuFuncs(MENUFUNC_NEXT, mSelect, MENUFUNC_PREV, itemLoader);  //绑定菜单的函数,如前进后退选择确认    
+	beginAnimation2(NULL);
+}
+
+//doAction执行的函数不能带开启动画，退出动画会被覆盖
+static void mSelect(void)
+{
+	setPrevMenuExit(&prevMenuData);//存储上次菜单的选项
+	doAction(true);  //带退出动画执行指令
+}
+static char automode=0;
+
+void resume(void)
+{
+	display_setDrawFunc(game1_draw);
+	buttons_setFuncs(btnRight, btnExit, btnLeft);
+	beginAnimation2(NULL);
+}
+
+void auto_mode(void)
+{
+	automode=~automode;
+	display_setDrawFunc(game1_draw);
+	buttons_setFuncs(btnRight, btnExit, btnLeft);
+	beginAnimation2(NULL);
+}
+
+static void game_exit(void)
+{
+	free(blocks);    //释放内存空间的函数
+	keep_on = false;
+	menuData.prevMenu = prevMenuData.last; // 强制指向上级菜单 
+	back();
+}
+
+static void itemLoader(byte num)
+{
+	num = 0;
+	setMenuOption_P(num++, PSTR("resume"), NULL, resume);
+	setMenuOption_P(num++, PSTR("auto mode"), NULL, auto_mode);
+	setMenuOption_P(num++, PSTR("exit game"), NULL, game_exit);//与退出选项等价，不过可以改名字和添加一些代码
+	addBackOption();
+}
+
+
 //游戏退出
 static bool btnExit()
 {
@@ -83,7 +147,7 @@ static bool btnExit()
 	if(lives == 255)  //生命值变量溢出，即变为零
 		game1_start();
 	else
-		animation_start(display_load, ANIM_MOVE_OFF);
+		animation_start(game1_meun, ANIM_MOVE_OFF);
 	return true;
 }
 //向左移动
@@ -101,7 +165,7 @@ static bool btnLeft()
 //游戏绘图
 display_t game1_draw()
 {
-	bool gameEnded = ((score >= BLOCK_COUNT) || (lives == 255));  //游戏结束标志，当得分大于砖块数或者生命值溢出
+	gameEnded = ((score >= BLOCK_COUNT) || (lives == 255));  //游戏结束标志，当得分大于砖块数或者生命值溢出
 
 	byte platformXtmp = platformX;        //缓存变量平台X坐标
 
@@ -117,6 +181,11 @@ display_t game1_draw()
 		platformXtmp = 0;
 	else if(platformXtmp > FRAME_WIDTH - PLATFORM_WIDTH)
 		platformXtmp = FRAME_WIDTH - PLATFORM_WIDTH;
+	
+	if(automode)
+	{
+		platformXtmp = ball.x + ball.velX;
+	}
 
 	// Draw platform 绘制平台图案
 	draw_bitmap(platformXtmp, FRAME_HEIGHT - 8, platform, 12, 8, NOINVERT, 0);

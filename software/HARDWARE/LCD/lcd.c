@@ -26,14 +26,16 @@ void LCD_Init(void)
 		WriteCmd(0xA0); 
 		WriteCmd(0xC0); 
 	}
+	
+	//WriteCmd(0xa7); //--set normal display
 }
   
 //清屏函数
 //color:要清屏的填充色
-void LCD_Clear(u16 color)
-{
-	ClearScreen();
-}  
+//void LCD_Clear(u16 color)
+//{
+//	ClearScreen();
+//}  
 
 
 

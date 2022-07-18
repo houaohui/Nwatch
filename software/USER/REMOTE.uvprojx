@@ -713,54 +713,14 @@
               <FilePath>..\HARDWARE\oledlib\oled_basic.c</FilePath>
             </File>
             <File>
-              <FileName>oled_bmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_bmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_buffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_buffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_color.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_color.c</FilePath>
-            </File>
-            <File>
               <FileName>oled_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\oledlib\oled_config.c</FilePath>
             </File>
             <File>
-              <FileName>oled_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_debug.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_draw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_draw.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_draw_ex_example.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_draw_ex_example.c</FilePath>
-            </File>
-            <File>
               <FileName>oled_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\oledlib\oled_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\oled_font.c</FilePath>
-            </File>
-            <File>
-              <FileName>test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\oledlib\test.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -826,6 +786,16 @@
               <FileName>wifi_cmd_task.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\WIFI\wifi_cmd_task.h</FilePath>
+            </File>
+            <File>
+              <FileName>TXT_Viewer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WIFI\TXT_Viewer.c</FilePath>
+            </File>
+            <File>
+              <FileName>TXT_Viewer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\WIFI\TXT_Viewer.h</FilePath>
             </File>
           </Files>
         </Group>

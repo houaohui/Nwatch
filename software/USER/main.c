@@ -120,7 +120,7 @@ const uint32_t STAY[]={
 	
 	TONE_REPEAT
 
-};  //æ—‹å¾‹
+};  //ĞıÂÉ
 
 
 const uint32_t TUNE[]={
@@ -465,18 +465,18 @@ const uint32_t TUNE[]={
 	
 	TONE_REPEAT
 
-};  //æ—‹å¾‹
+};  //ĞıÂÉ
 
 void c_setup()
 {
 	
 	//SystemInit();	
- 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//è®¾ç½®ç³»ç»Ÿä¸­æ–­ä¼˜å…ˆçº§åˆ†ç»„2
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// è®¾ç½®ä¸­æ–­ä¼˜å…ˆçº§åˆ†ç»„2	  
-	//delay_init(168);          //åˆå§‹åŒ–å»¶æ—¶å‡½æ•°
-	delay_init();	    	 //å»¶æ—¶å‡½æ•°åˆå§‹?
+ 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//ÉèÖÃÏµÍ³ÖĞ¶ÏÓÅÏÈ¼¶·Ö×é2
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// ÉèÖÃÖĞ¶ÏÓÅÏÈ¼¶·Ö×é2	  
+	//delay_init(168);          //³õÊ¼»¯ÑÓÊ±º¯Êı
+	delay_init();	    	 //ÑÓÊ±º¯Êı³õÊ¼?
 #if COMPILE_UART
-	uart_init(UART_BAUD);		//åˆå§‹åŒ–ä¸²å£æ³¢ç‰¹ç‡ä¸º115200
+	uart_init(UART_BAUD);		//³õÊ¼»¯´®¿Ú²¨ÌØÂÊÎª115200
 	//printf("begun");
 #endif
 	
@@ -484,49 +484,50 @@ void c_setup()
 	
 	buttons_init();
  	//Yaogan_Init();
-	LCD_Init();               //åˆå§‹åŒ–OLEDæ¥å£
+	LCD_Init();               //³õÊ¼»¯OLED½Ó¿Ú
 	
 	Usart2_Init(115200);
 	WiFi_ResetIO_Init();
 	millis_init();
 	
-	console_log(200,"TEST:");
-	console_log(200,"1\r\n23\r\n456\n789a\nbcdef\nghijkl\nmnopqrs\ntuvwxyz~\n!@#$^&*()\n`-=_+[]\\|/");
-	console_log(200,"\n");
-	console_log(120,"--- welcome !---");
-	console_log(10,"  _   _    _    ");
-	console_log(10," | | | |  |_|   ");
-	console_log(10," | |_| |   _    ");
-	console_log(10," |  _  |  | |   ");
-	console_log(10," | | | |  | |   ");
-	console_log(10," |_| |_|  |_|   ");
-	console_log(10,"--press button--");
-	while(KEY0);
+//	console_log(200,"TEST:");
+//	console_log(200,"1\r\n23\r\n456\n789a\nbcdef\nghijkl\nmnopqrs\ntuvwxyz~\n!@#$^&*()\n`-=_+[]\\|/");
+//	console_log(200,"\n");
+//	console_log(120,"--- welcome !---");
+//	console_log(10,"  _   _    _    ");
+//	console_log(10," | | | |  |_|   ");
+//	console_log(10," | |_| |   _    ");
+//	console_log(10," |  _  |  | |   ");
+//	console_log(10," | | | |  | |   ");
+//	console_log(10," |_| |_|  |_|   ");
+//	console_log(10,"--press button--");
+//	while(KEY0);
 	console_log(1,"reset wifi");
-	RESET_IO(0);                                    //å¤ä½IOæ‹‰ä½ç”µå¹³
-	delay_ms(500);                                  //å»¶æ—¶500ms
+	RESET_IO(0);                                    //¸´Î»IOÀ­µÍµçÆ½
+	delay_ms(500);                                  //ÑÓÊ±500ms
 	RESET_IO(1);   
 	delay_ms(1000);
 	WiFi_send("AT\r\n"); 
 	console_log(1,"send AT ");
 	delay_ms(500);
-	WiFi_send("AT+CWJAP=\"%s\",\"%s\"\r\n",SSID,PASS); 
+	//WiFi_send("AT+CWJAP=\"%s\",\"%s\"\r\n",SSID,PASS); 
 	console_log(1,"%s",Usart2_RxBuff);
 	console_log(1,"%s",&Data_buff[2]);
 
 	
-	char i=0;
-	do{
-		i=MPU_Init();
-		//printf("init1:%d",i);
-		console_log(500,"init1 :%d",i);
-	}while(i&KEY0);
-
-	do{
-		i=mpu_dmp_init();
-		//printf("init2:%d",i);
-		console_log(500,"init2 :%d",i);
-	}while(i&KEY0);
+//	char i=0;
+//	do{
+//		i=MPU_Init();
+//		//printf("init1:%d",i);
+//		console_log(500,"init1 :%d",i);
+//	}while(i&&KEY0);
+//	mpu_err_flag=i;
+//	do{
+//		i=mpu_dmp_init();
+//		//printf("init2:%d",i);
+//		console_log(500,"init2 :%d",i);
+//	}while(i&&KEY0);
+//	mpu_err_flag=i;
 	
 	console_log(500,"start !");
 	milliseconds=0;
@@ -534,11 +535,11 @@ void c_setup()
 	memset(&oledBuffer, 0x00, FRAME_BUFFER_SIZE);
 	
 	appconfig_init();
-	led_init();               //åˆå§‹åŒ–LED
+	led_init();               //³õÊ¼»¯LED
 	buzzer_init();	
 	//global_init();
 	
-	alarm_init();             //æ— æ³•å‚¨å­˜é—¹é’Ÿï¼Œæ¯æ¬¡é‡å¯ä»¥åéœ€è¦è‡ªå®šä¹‰
+	alarm_init();             //ÎŞ·¨´¢´æÄÖÖÓ£¬Ã¿´ÎÖØÆôÒÔºóĞèÒª×Ô¶¨Òå
 
 	
 	
@@ -548,7 +549,7 @@ void c_setup()
 	// Set watchface
 	display_set(watchface_normal);
 
-	display_load();//å¯åŠ¨è¡¨ç›˜
+	display_load();//Æô¶¯±íÅÌ
 
   
 }
@@ -586,7 +587,7 @@ void c_loop()
 	pwrmgr_update();
 
 
-//æ˜¾ç¤ºå®Œæˆåæ¸…é™¤ç¼“å†²åŒº
+//ÏÔÊ¾Íê³ÉºóÇå³ı»º³åÇø
 	memset(&oledBuffer, 0x00, FRAME_BUFFER_SIZE);
 
 }
@@ -597,13 +598,13 @@ int main(void)
 	
 	//printf("begin>>>\r\n");
 	
-	c_setup();	    //åˆå§‹åŒ–
+	c_setup();	    //³õÊ¼»¯
 
 	
 	while(1)
 	{
 
-		c_loop(); //å¾ªç¯
+		c_loop(); //Ñ­»·
 	}
 	
 }

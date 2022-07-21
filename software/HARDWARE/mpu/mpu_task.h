@@ -9,5 +9,6 @@ extern float yaw;
 	
 void mpu_open(void);
 void mpu_updata(void);
+void myOLED_DrawLine(s16 x0, s16 y0, s16 x1, s16 y1,u8 t);
 
 #endif

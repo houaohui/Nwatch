@@ -23,29 +23,39 @@ void draw_point(u8 x,u8 y,u8 value)
 //绘制两点线段至缓存
 //t=1绘制线段绘制线段至缓存
 //t=0清除线段绘制线段至缓存
-void myOLED_DrawLine(u8 x0, u8 y0, u8 x1, u8 y1,u8 t)
+void myOLED_DrawLine(s16 x0, s16 y0, s16 x1, s16 y1,u8 t)
 {
     signed char dx, dy, ystep;
     int err;
     u8 swapxy = 0;
 	
-	if (x0 > 127)
-        return;
-    if (y0 > 63)
-        return;
-    if (x1 > 127)
-       return;
-    if (y1 > 63)
-        return;
-
-//    if (x0 > 127)
-//        x0 = 127;
+//	if (x0 > 127)
+//        return;
 //    if (y0 > 63)
-//        y0 = 63;
+//        return;
 //    if (x1 > 127)
-//        x1 = 127;
+//       return;
 //    if (y1 > 63)
-//        y1 = 63;
+//        return;
+	
+	if (x0 < 0)
+        x0 = 0;
+    if (y0 < 0)
+        y0 = 0;
+
+	if (x1 < 0)
+        x1 = 0;
+    if (y1 < 0)
+        y1 = 0;
+	
+    if (x0 > 127)
+        x0 = 127;
+    if (y0 > 63)
+        y0 = 63;
+    if (x1 > 127)
+        x1 = 127;
+    if (y1 > 63)
+        y1 = 63;
 
     dx = abs(x1 - x0);//求绝对值
     dy = abs(y1 - y0);
@@ -228,12 +238,14 @@ static display_t draw()
 	sprintf(buf,"yaw:%.2f",yaw);
 	draw_string((char*)buf, false, 0, 16);
 	
-	//static u8 i=0;
-	//static float x=0;
-	//x=x+0.05;
-	//i=32*sin(x)+32;
-
-	dso(roll,delta);
+	static u8 i=0;
+	static float x=0;
+	x=x+0.05;
+	i=32*sin(x)+32;
+	if(mpu_err_flag)
+		dso(i,delta);
+	else
+		dso(roll,delta);
 	return DISPLAY_BUSY;
 }
 

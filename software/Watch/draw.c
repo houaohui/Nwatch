@@ -248,7 +248,7 @@ void mydraw_bitmap(s16 x, s16 yy, const byte* bitmap, byte w, byte h, bool inver
 				byte xx = ww + x;
 			
 				// Stop if X co-ordinate is outside the frame
-				if(xx >= FRAME_WIDTH_W || xx < start_x)
+				if(xx >= FRAME_WIDTH_W || xx < start_x || xx >= FRAME_WIDTH)
 					continue;
 
 				// Read pixels
@@ -271,7 +271,7 @@ void mydraw_bitmap(s16 x, s16 yy, const byte* bitmap, byte w, byte h, bool inver
 				byte xx = ww + x;
 		
 				// Stop if X co-ordinate is outside the frame
-				if(xx >= FRAME_WIDTH_W || xx < start_x)
+				if(xx >= FRAME_WIDTH_W || xx < start_x || xx >= FRAME_WIDTH)
 					continue;
 
 				// Read pixels

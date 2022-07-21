@@ -190,14 +190,14 @@ void connect_my_phone(void)
 	if(cmd_state(10,1,"OK")==0)
 	{
 		console_log(500,"connect tcp:");
-		console_log(500,"AT+CIPMODE=1");
+		//console_log(500,"AT+CIPMODE=1");
 		WiFi_send("AT+CIPMODE=1\r\n");
 	}
 	
 	
 	if(cmd_state(10,2,"OK")==0)
 	{
-		console_log(500,"AT+CIPMUX=0");
+		//console_log(500,"AT+CIPMUX=0");
 		WiFi_send("AT+CIPMUX=0\r\n");
 	}
 	
@@ -209,7 +209,7 @@ void connect_my_phone(void)
 	
 	if(cmd_state(10,4,"OK")==0)
 	{
-		console_log(500,"AT+CIPSEND");
+		//console_log(500,"AT+CIPSEND");
 		WiFi_send("AT+CIPSEND\r\n");                  //发送进入透传指令
 	}
 	
@@ -252,7 +252,7 @@ void get_weather_cmd(void)
 	if(cmd_state(10,1,"OK")==0)
 	{
 		console_log(500,"connect tcp:");
-		console_log(500,"AT+CIPMODE=1");
+		//console_log(500,"AT+CIPMODE=1");
 		WiFi_send("AT+CIPMODE=1\r\n");
 	}
 
@@ -260,7 +260,7 @@ void get_weather_cmd(void)
 	
 	if(cmd_state(10,2,"OK")==0)
 	{
-		console_log(500,"AT+CIPMUX=0");
+		//console_log(500,"AT+CIPMUX=0");
 		WiFi_send("AT+CIPMUX=0\r\n");
 	}
 	
@@ -272,7 +272,7 @@ void get_weather_cmd(void)
 	
 	if(cmd_state(10,4,"OK")==0)
 	{
-		console_log(500,"AT+CIPSEND");
+		//console_log(500,"AT+CIPSEND");
 		WiFi_send("AT+CIPSEND\r\n");                  //发送进入透传指令
 	}
 	

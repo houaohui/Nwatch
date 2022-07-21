@@ -38,31 +38,18 @@ int sizeof_str(char *str)
 }
 
 
-inline static void setBuffByte(byte* buff, byte x, byte y, byte val)//, byte colour)
-{
-	uint pos = x + (y / 8) * FRAME_WIDTH;
-	buff[pos] |= val;
-}
-static void txtViewer_drawOneChar(char* string, bool invert, byte x, byte y)
+static void txtViewer_drawOneChar(char* string, bool invert, s16 x, s16 y, s16 start_x, s16 start_y, s16 boundary_h, s16 boundary_w)
 {
 
     char c = *string - 0x20;
-    //byte xx = x + (charCount*7);
-    byte xx = x;
-    draw_bitmap(xx, y, smallFont[(byte)c], SMALLFONT_WIDTH, SMALLFONT_HEIGHT, invert, 0);
-    if(invert)
-    {
-        if(xx > 0)
-            setBuffByte(oledBuffer, xx-1, y, 0xFF);//, WHITE);
-        if(xx < FRAME_WIDTH - 5)
-            setBuffByte(oledBuffer, xx+5, y, 0xFF);//, WHITE);
-    }
+	
+    mydraw_bitmap(x, y, smallFont[(byte)c], SMALLFONT_WIDTH, SMALLFONT_HEIGHT, invert, 0,start_x, start_y, boundary_h,boundary_w);
     
 }
 
-static void txtViewer_printOneChar(int x, int y,char *str)
+static void txtViewer_printOneChar(s16 x, s16 y,char *str, s16 start_x, s16 start_y, s16 boundary_h, s16 boundary_w)
 {
-	txtViewer_drawOneChar(str, false, x, y);
+	txtViewer_drawOneChar(str, false, x, y, start_x, start_y, boundary_h,boundary_w);
 }
 
 
@@ -198,7 +185,8 @@ void txtViewer_display(txtViewer_t *viewer)
 					
 					if(col_char_cnt*viewer->char_w - viewer->txt_ofsetX > -viewer->char_w
 						&&col_char_cnt*viewer->char_w < viewer->txt_ofsetX + viewer->window_w) {
-						txtViewer_printOneChar(txt_x + viewer->window_x, txt_y + viewer->window_y,&viewer->data_buf[char_idx]);
+						txtViewer_printOneChar(txt_x + viewer->window_x, txt_y + viewer->window_y, &viewer->data_buf[char_idx], 
+							viewer->window_x,viewer->window_y, viewer->window_y + viewer->window_h, viewer->window_x + viewer->window_w);
 					}
 					
 				}

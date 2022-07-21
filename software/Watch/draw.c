@@ -158,24 +158,58 @@ void draw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inver
 	}
 }
 
+u8 moveLowBits(u8 n)
+{
+	u8 i=0xff;
+	while(n-- && i!=0)
+	{
+		i = i << 1;
+	}
+	return i;
+}
 
-void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool invert, byte offsetY,byte FRAME_HEIGHT_H,byte FRAME_WIDTH_W)
+u8 moveLHigBits(u8 n)
+{
+	u8 i=0xff;
+	while(n-- && i!=0)
+	{
+		i = i >> 1;
+	}
+	return i;
+}
+
+// 事实上，可以根据画图函数写出一个任意区域截图函数，再显示出来，不过太耗性能
+// 窗口限制画图函数，窗口对角坐标为: (start_x, start_y),(FRAME_HEIGHT_H,FRAME_WIDTH_W),命名很随意...
+void mydraw_bitmap(s16 x, s16 yy, const byte* bitmap, byte w, byte h, bool invert, byte offsetY,s16 start_x,s16 start_y, s16 FRAME_HEIGHT_H,s16 FRAME_WIDTH_W)
 {
 	// Apply animation offset
 	yy += animation_offsetY();
 
-	// 
-	byte y = yy - offsetY;
+	// 哈哈 y坐标必须是正的，因为要用它来定位图像数据
+	byte y = yy ;
 
 	// 
 	byte h2 = h / 8;
 	
 	// 
 	byte pixelOffset = (y % 8);
+	// 计算窗口切割需要消除的图像数据位数
+	s16 LowBitsNeedToClear = 0;
+	s16 HigBitsNeedToClear = 0;
+	// 应该能支持所有大小的图形，没有测试
+	if(yy < start_y && start_y < yy + h)
+	{
+		LowBitsNeedToClear = start_y - yy;
+	}
+	
+	if(y < FRAME_HEIGHT_H && FRAME_HEIGHT_H < y + h)
+	{
+		HigBitsNeedToClear = y + h - FRAME_HEIGHT_H;
+	}
 
 	byte thing3 = (yy+h);
 	
-	// 
+	// 每一行
 	LOOP(h2, hh)
 	{
 		// 
@@ -183,7 +217,7 @@ void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inv
 		byte hhhh = hhh + 8; // Y pos at end of pixel column (8 pixels)
 
 		// 
-		if(offsetY && (hhhh < yy || hhhh > FRAME_HEIGHT_H || hhh > thing3))
+		if(offsetY && (hhhh < yy || hhhh > FRAME_HEIGHT || hhh > thing3))
 			continue;
 
 		// 
@@ -195,14 +229,17 @@ void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inv
 			else if(hhhh > thing3)
 				offsetMask = (0xFF>>(hhhh-thing3));
 		}
-
-		uint aa = ((hhh / 8) * FRAME_WIDTH_W);
-		
+		//偏移128个字节
+		uint aa = ((hhh / 8) * FRAME_WIDTH);
+		//图像的偏移
 		const byte* b = bitmap + (hh*w);
 		
 		// If() outside of loop makes it faster (doesn't have to keep re-evaluating it)
 		// Downside is code duplication
-		if(!pixelOffset && hhh < FRAME_HEIGHT_H)
+		// y坐标能被8整除
+		
+		
+		if(!pixelOffset )
 		{
 			// 
 			LOOP(w, ww)
@@ -211,12 +248,13 @@ void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inv
 				byte xx = ww + x;
 			
 				// Stop if X co-ordinate is outside the frame
-				if(xx >= FRAME_WIDTH_W)
+				if(xx >= FRAME_WIDTH_W || xx < start_x)
 					continue;
 
 				// Read pixels
-				byte pixels = readPixels(b + ww, invert) & offsetMask;
+				byte pixels = readPixels(b + ww, invert) & offsetMask & moveLowBits(LowBitsNeedToClear) & moveLHigBits(HigBitsNeedToClear);
 
+				if(hhh < FRAME_HEIGHT_H )
 				oledBuffer[xx + aa] |= pixels;
 
 				//setBuffByte(buff, xx, hhh, pixels, colour);
@@ -224,7 +262,7 @@ void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inv
 		}
 		else
 		{
-			uint aaa = ((hhhh / 8) * FRAME_WIDTH_W);
+			uint aaa = ((hhhh / 8) * FRAME_WIDTH);
 			
 			// 
 			LOOP(w, ww)
@@ -233,23 +271,34 @@ void mydraw_bitmap(byte x, byte yy, const byte* bitmap, byte w, byte h, bool inv
 				byte xx = ww + x;
 		
 				// Stop if X co-ordinate is outside the frame
-				if(xx >= FRAME_WIDTH_W)
+				if(xx >= FRAME_WIDTH_W || xx < start_x)
 					continue;
 
 				// Read pixels
-				byte pixels = readPixels(b + ww, invert) & offsetMask;
+				byte pixels = readPixels(b + ww, invert) & offsetMask & moveLowBits(LowBitsNeedToClear) & moveLHigBits(HigBitsNeedToClear);
 
-				// 
-				if(hhh < FRAME_HEIGHT_H)
+				// 在窗口范围内必须要画全
+				if(hhh < FRAME_HEIGHT_H ) {
 					oledBuffer[xx + aa] |= pixels << pixelOffset;
 					//setBuffByte(buff, xx, hhh, pixels << pixelOffset, colour);				
 
 				// 
-				if(hhhh < FRAME_HEIGHT_H)
+				// if(hhhh < FRAME_HEIGHT_H )
 					oledBuffer[xx + aaa] |= pixels >> (8 - pixelOffset);
-					//setBuffByte(buff, xx, hhhh, pixels >> (8 - pixelOffset), colour);		
+				}
+				if(hhhh < FRAME_HEIGHT_H ) //下半部分还是要画
+					oledBuffer[xx + aaa] |= pixels >> (8 - pixelOffset);
+				
 			}
 		}
+		if(LowBitsNeedToClear >= 8)
+			LowBitsNeedToClear = LowBitsNeedToClear - 8;
+		else
+			LowBitsNeedToClear = 0;
+		if(HigBitsNeedToClear >= 8)
+			HigBitsNeedToClear = HigBitsNeedToClear - 8;
+		else
+			HigBitsNeedToClear = 0;
 	}
 }
 

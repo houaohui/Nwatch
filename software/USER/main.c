@@ -515,7 +515,7 @@ void c_setup()
 	console_log(1,"%s",&Data_buff[2]);
 
 	
-//	char i=0;
+	char i=1;
 //	do{
 //		i=MPU_Init();
 //		//printf("init1:%d",i);
@@ -527,7 +527,7 @@ void c_setup()
 //		//printf("init2:%d",i);
 //		console_log(500,"init2 :%d",i);
 //	}while(i&&KEY0);
-//	mpu_err_flag=i;
+	mpu_err_flag=i;
 	
 	console_log(500,"start !");
 	milliseconds=0;

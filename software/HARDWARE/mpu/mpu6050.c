@@ -1,7 +1,7 @@
 #include "mpu6050.h"
 #include "delay.h"
 #include "usart.h"
-#inlcude "gui_log_console.h"
+#include "gui_log_console.h"
 //初始化MPU6050
 //返回值:0,成功
 //    其他,错误代码
